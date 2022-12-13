@@ -18,17 +18,15 @@ int main(int argc, char *argv[]) {
 
   char *file_path;
 
-  if(argc<=1){
-    fprintf(stderr,"no arguments provided!\n");
+  if (argc <= 1) {
+    fprintf(stderr, "no arguments provided!\n");
+  } else {
+    file_path = argv[2];
   }
-  else{
-      file_path = argv[2];
+
+  if (file_path) {
+    load_file_directory(file_path);
   }
-
-
-  load_file_directory(file_path);
-
-
 
   init();
 
@@ -40,9 +38,6 @@ int main(int argc, char *argv[]) {
     Mix_PlayMusic(mp3, -1);
   }
 }
-
-
-
 
 bool loadmedia(char *file_path) {
   bool success = true;
@@ -81,19 +76,18 @@ void init() {
   }
 }
 
-
-//list files on directory 
+// list files on directory
 void load_file_directory(char *dir_path) {
 
   DIR *dir;
   struct dirent *d;
   dir = opendir(dir_path);
 
-  if(dir){
-      while((d=readdir(dir)) != NULL){
-          if(d->d_type == DT_REG){
-              printf("%s\n",d->d_name);
-          }
+  if (dir) {
+    while ((d = readdir(dir)) != NULL) {
+      if (d->d_type == DT_REG) {
+        printf("%s\n", d->d_name);
       }
+    }
   }
 }
