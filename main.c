@@ -4,10 +4,17 @@
 #include <string.h>
 #include <unistd.h>
 
+
+#include <mpg123.h>
+
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
 
-Mix_Music *mp3 = NULL;
+struct tags{
+  const char *artist;
+}tags;
+
+Mix_Music *music = NULL;
 
 bool loadmedia(char *filepath);
 void play();
@@ -30,33 +37,41 @@ int main(int argc, char *argv[]) {
 
   init();
 
+
+
+
   char *file = argv[1];
 
   bool status = loadmedia(file);
-
-  if (status) {
-    Mix_PlayMusic(mp3, -1);
+  if(status){
+    printf("%s - %s\n",Mix_GetMusicArtistTag(music),Mix_GetMusicTitleTag(music));
+    if(Mix_PlayMusic(music,1)){
+      printf("something wrong");
+      Mix_FreeMusic(music);
+      
+    }
   }
+
+  while(!SDL_QuitRequested())
+  SDL_Delay(250);
+
 }
 
 bool loadmedia(char *file_path) {
-  bool success = true;
-
-  printf("%s is path\n", file_path);
-
-  mp3 = Mix_LoadMUS(file_path);
-
-  if (mp3 == NULL) {
-    printf("media load failed\n");
-    success = false;
-  } else {
-    printf("media loaded succefully\n");
-  }
-
-  return success;
+ 
+bool success = false;
+if(file_path){
+  music = Mix_LoadMUS(file_path);
+  success = true;
+}
+else{
+  printf("File Loaded Failed\n");
 }
 
-void play() { Mix_FreeMusic(mp3); }
+return success;
+
+}
+
 
 void init() {
 
