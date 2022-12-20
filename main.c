@@ -4,22 +4,14 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "file_handle.h"
+#include "file_handle.c"
 
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
 
-struct tags
-{
-  const char *artist;
-} tags;
-
 Mix_Music *music = NULL;
 
-bool loadmedia(char *filepath);
-void play();
 void init();
-void load_file_directory(char *dir_path);
 
 int main(int argc, char *argv[])
 {
@@ -41,8 +33,8 @@ int main(int argc, char *argv[])
   }
 
   init();
-
   int count = 0;
+
   for (struct song *node = head; node; node = node->next)
   {
     printf("%s\n", node->file_path);
@@ -61,39 +53,6 @@ int main(int argc, char *argv[])
       SDL_Delay(250);
     Mix_FreeMusic(song);
   }
-
-  // char *file = argv[1];
-
-  // bool status = loadmedia(file);
-  // if(status){
-  //   printf("%s - %s\n",Mix_GetMusicArtistTag(music),Mix_GetMusicTitleTag(music));
-  //   if(Mix_PlayMusic(music,1)){
-  //     printf("something wrong");
-  //     Mix_FreeMusic(music);
-
-  //   }
-
-  // }
-
-  // while(!SDL_QuitRequested())
-  // SDL_Delay(250);
-}
-
-bool loadmedia(char *file_path)
-{
-
-  bool success = false;
-  if (file_path)
-  {
-    music = Mix_LoadMUS(file_path);
-    success = true;
-  }
-  else
-  {
-    printf("File Loaded Failed\n");
-  }
-
-  return success;
 }
 
 void init()
