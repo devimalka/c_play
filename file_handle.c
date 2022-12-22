@@ -1,9 +1,9 @@
 #include "file_handle.h"
 #include <stdlib.h>
+#include <dirent.h>
 
 struct song *head = NULL;
-
-
+struct song *node = NULL;
 
 void load_file_directory(char *dir_path)
 {
@@ -23,7 +23,7 @@ void load_file_directory(char *dir_path)
                 if (extension && (strcmp(extension, ".mp3")) == 0)
                 {
                     count++;
-                    struct song *node = malloc(sizeof(struct song));
+                    node = malloc(sizeof(struct song));
 
                     if (!node)
                     {
@@ -31,7 +31,14 @@ void load_file_directory(char *dir_path)
                     }
 
                     char fpp[1024];
-                    sprintf(fpp, "%s/%s", dir_path, d->d_name);
+                    int string_length = strlen(dir_path); //  take the string length to check the last character of the given directory.
+                    if (dir_path[string_length - 1] != '/')
+                    {
+                        sprintf(fpp, "%s/%s", dir_path, d->d_name); // if given directory last character is not "/" the "/" character will be added.
+                    }
+                    else
+                        sprintf(fpp, "%s%s", dir_path, d->d_name);
+
                     node->file_path = strdup(fpp);
 
                     node->next = head;
@@ -42,4 +49,18 @@ void load_file_directory(char *dir_path)
     }
 
     printf("count is %d\n", count);
+}
+
+char *returnPath(char *file)
+{
+    char *path = realpath(file, NULL);
+    if (path == NULL)
+    {
+        fprintf(stderr, "Error Full Path\n");
+    }
+    else
+    {
+        return path;
+        free(path);
+    }
 }

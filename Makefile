@@ -1,3 +1,4 @@
 CC=gcc
+CFLAGS = -lSDL2 -lSDL2main -lSDL2_mixer
 all: main.c
-	gcc main.c -l SDL2 -l SDL2main -l SDL2_mixer -o a.out
+	$(CC) $(CFLAGS) -o a.out main.c
