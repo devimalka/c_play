@@ -40,78 +40,68 @@ int main(int argc, char *argv[])
 
   int c;
 
-  while ((c = getopt(argc, argv, "d:f:")) != -1)
-  {
-    switch (c)
-    {
-    case 'f':
-      file = optarg;
-      file_bool = true;
-      break;
-    case 'd':
-      folder = optarg;
-      folder_bool = true;
-      break;
-
-    default:
-      break;
-    }
-  }
-
   if (argc <= 1)
   {
     fprintf(stderr, "no arguments provided!\n");
   }
-  else if (folder && file)
+  else
   {
-    int loop = true;
-    int choice;
-    while (loop)
+    while ((c = getopt(argc, argv, "d:f:")) != -1)
     {
-      printf("argument -d and -f given\nChose One Option\n1.[-d]:%s\n2.[-f]:%s\nChoice[1/2]:", folder, file);
-      scanf("%d", &choice);
-      if (choice > 2)
+      switch (c)
       {
-        printf("Invalid Option\n");
-        continue;
+      case 'f':
+        file = optarg;
+        file_bool = true;
+        break;
+      case 'd':
+        folder = optarg;
+        folder_bool = true;
+        break;
+
+      default:
+        break;
       }
-      else
-        loop = false;
     }
-    if (choice == 1)
-    {
+  }
+  if(folder && file){
+    printf("Two Given Specifiy One Option\n");
+    exit(1);
+  }
+  else if(folder){
+    load_file_directory(folder);
+    Mix_HookMusicFinished(musicFinishedCallback);
+    for(struct song *current = head;current->next!=NULL;current= current->next){
+      play(current->file_path);
     }
-    if (choice == 2)
-    {
 
-      char *path = returnPath(file);
-      printf("%s\n", path);
-      play(path);
-    }
+  }
+  else if(file){
+    play(returnPath(file));
   }
 
-  int count = 0;
-  load_file_directory(folder);
-  Mix_HookMusicFinished(musicFinishedCallback);
-  for (struct song *node = head; node; node = node->next)
-  {
-    printf("%s\n", node->file_path);
-  }
-  for (struct song *node = head; node; node = node->next)
-  {
-    printf("%s\n", node->file_path);
-    printf("count is %d\n", count);
-    count++;
-    // Mix_Music *song = Mix_LoadMUS(node->file_path);
-    // if (Mix_PlayMusic(song, 1) != 0)
-    // {
-    //   printf("something\n");
-    // }
-    // while (!SDL_QuitRequested())
-    //   SDL_Delay(250);
-    // Mix_FreeMusic(song);
-    play(node->file_path);
-  }
+  // int count = 0;
+  // load_file_directory(folder);
+  // Mix_HookMusicFinished(musicFinishedCallback);
+  // for (struct song *node = head; node; node = node->next)
+  // {
+  //   printf("%s\n", node->file_path);
+  // }
+  // for (struct song *node = head; node; node = node->next)
+  // {
+  //   printf("%s\n", node->file_path);
+  //   printf("count is %d\n", count);
+  //   count++;
+  //   // Mix_Music *song = Mix_LoadMUS(node->file_path);
+  //   // if (Mix_PlayMusic(song, 1) != 0)
+  //   // {
+  //   //   printf("something\n");
+  //   // }
+  //   // while (!SDL_QuitRequested())
+  //   //   SDL_Delay(250);
+  //   // Mix_FreeMusic(song);
+  //   play(node->file_path);
+  // }
 }
 
 void init()
