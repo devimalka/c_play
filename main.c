@@ -3,16 +3,20 @@
 #include <string.h>
 #include <unistd.h>
 #include <getopt.h>
-
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
 
 #include "file_handle.c"
 #include "songs.c"
+#include "getoptions.c"
 
 Mix_Music *music = NULL;
 
 void init();
+
+
+
+
 
 void musicFinishedCallback()
 {
@@ -31,22 +35,26 @@ void musicFinishedCallback()
 
 int main(int argc, char *argv[])
 {
+
   init();
 
   char *file = NULL;
   int file_bool = false;
   char *folder = NULL;
   int folder_bool = false;
+  int help_bool;
 
   int c;
 
+  
+
   if (argc <= 1)
   {
-    fprintf(stderr, "no arguments provided!\n");
+    fprintf(stderr, "no arguments provided!\nTry 'cplay --help' for more information\n");
   }
   else
   {
-    while ((c = getopt(argc, argv, "d:f:")) != -1)
+    while ((c = getopt(argc, argv, "d:f:h")) != -1)
     {
       switch (c)
       {
@@ -58,26 +66,38 @@ int main(int argc, char *argv[])
         folder = optarg;
         folder_bool = true;
         break;
+      case 'h':
+        help_bool = true;
+        break;
+     
 
       default:
         break;
       }
     }
   }
-  if(folder && file){
+
+  if (folder && file)
+  {
     printf("Two Given Specifiy One Option\n");
     exit(1);
   }
-  else if(folder){
+  else if (folder)
+  {
     load_file_directory(folder);
     Mix_HookMusicFinished(musicFinishedCallback);
-    for(struct song *current = head;current->next!=NULL;current= current->next){
+    for (struct song *current = head; current->next != NULL; current = current->next)
+    {
       play(current->file_path);
     }
-
   }
-  else if(file){
+  else if (file)
+  {
     play(returnPath(file));
+  }
+  else if(help_bool){
+    puts("help needed");
+    print_help();
   }
 
   // int count = 0;

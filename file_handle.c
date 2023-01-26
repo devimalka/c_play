@@ -82,11 +82,9 @@ char * find_endwith_slash(char *dir_path, char *file_name)
         sprintf(full_path, "%s%s", dir_path, file_name);
     }
 
-    char * full_name = malloc(strlen(full_path) * sizeof(char));
-    full_name = full_path;
-
+    char * full_name = malloc(strlen(full_path+1) * sizeof(char));
+    strcpy(full_name,full_path);
     return full_name;
-    free(full_name);
 
 
 }
