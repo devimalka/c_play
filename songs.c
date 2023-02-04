@@ -16,3 +16,4 @@ int play(char *song)
         SDL_Delay(250);
     Mix_FreeMusic(music);
 }
+

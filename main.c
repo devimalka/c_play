@@ -13,115 +13,85 @@
 Mix_Music *music = NULL;
 
 void init();
-
-
-
-
-
-void musicFinishedCallback()
-{
-  // Get the next song in the linked list and play it
-  if (node->next)
-  {
-    node = node->next;
-    Mix_PlayMusic(Mix_LoadMUS(node->file_path), 1);
-  }
-  // If there are no more songs in the linked list, stop the music
-  else
-  {
-    Mix_HaltMusic();
-  }
-}
+void musicFinishedPlayback();
 
 int main(int argc, char *argv[])
 {
 
   init();
 
+  int f = 0;
+  int d = 0;
   char *file = NULL;
-  int file_bool = false;
-  char *folder = NULL;
-  int folder_bool = false;
-  int help_bool;
+  char *directory = NULL;
 
-  int c;
 
-  
+
+  const struct option long_options[] = {
+      /*
+        {"verbose",no_argument,&verbose_flag,1}
+      */
+      {"help", no_argument, 0, 'h'},
+      {"file", required_argument, &f, 'f'},
+      {"directory", required_argument, &d, 'd'},
+      {0, 0, 0, 0}
+  };
+
+  int opt;
 
   if (argc <= 1)
   {
-    fprintf(stderr, "no arguments provided!\nTry 'cplay --help' for more information\n");
+    fprintf(stderr, "No arguments provided!\nTry 'cplay --help' for more information.\n");
   }
   else
   {
-    while ((c = getopt(argc, argv, "d:f:h")) != -1)
+    while ((opt = getopt_long(argc, argv, "d:f:h", long_options, NULL)) != -1)
     {
-      switch (c)
-      {
-      case 'f':
-        file = optarg;
-        file_bool = true;
-        break;
-      case 'd':
-        folder = optarg;
-        folder_bool = true;
-        break;
-      case 'h':
-        help_bool = true;
-        break;
-     
+      printf("optarg %s\n",optarg);
+      switch(opt){
+        case 'h':
+          print_help();
+          break;
+        case 'f':
+       
+          file = optarg;
+          break;
+        case 'd':
+        
+          directory = optarg;
+          break;
+       default:
+          break;
 
-      default:
-        break;
       }
     }
   }
 
-  if (folder && file)
-  {
-    printf("Two Given Specifiy One Option\n");
-    exit(1);
-  }
-  else if (folder)
-  {
-    load_file_directory(folder);
-    Mix_HookMusicFinished(musicFinishedCallback);
-    for (struct song *current = head; current->next != NULL; current = current->next)
-    {
-      play(current->file_path);
-    }
-  }
-  else if (file)
-  {
-    play(returnPath(file));
-  }
-  else if(help_bool){
-    puts("help needed");
-    print_help();
-  }
 
-  // int count = 0;
-  // load_file_directory(folder);
-  // Mix_HookMusicFinished(musicFinishedCallback);
-  // for (struct song *node = head; node; node = node->next)
-  // {
-  //   printf("%s\n", node->file_path);
-  // }
-  // for (struct song *node = head; node; node = node->next)
-  // {
-  //   printf("%s\n", node->file_path);
-  //   printf("count is %d\n", count);
-  //   count++;
-  //   // Mix_Music *song = Mix_LoadMUS(node->file_path);
-  //   // if (Mix_PlayMusic(song, 1) != 0)
-  //   // {
-  //   //   printf("something\n");
-  //   // }
-  //   // while (!SDL_QuitRequested())
-  //   //   SDL_Delay(250);
-  //   // Mix_FreeMusic(song);
-  //   play(node->file_path);
-  // }
+  if(f && d){
+    printf("OPTION -f, --file and -d, --directory are given\n");
+    printf("%s\n",directory);
+    int valid = 0;
+    char response;
+
+    while(!valid)
+    {
+      printf("Enter one option [f\\d]: ");
+      scanf(" %c",&response);
+
+      if(response == 'd' || response == 'f'){
+        valid = 1;
+      }
+      else
+        printf("Wrong Input given press f for single file and d for directory option\n");
+    }   
+
+   
+  }
+  printf("%d\n %d",f,d);
+ 
+  
+   
 }
 
 void init()
@@ -140,5 +110,21 @@ void init()
   if (Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048) < 0)
   {
     fprintf(stderr, "SDL_mixer could not be initialized %s\n", Mix_GetError());
+  }
+}
+
+
+void musicFinishedCallback()
+{
+  // Get the next song in the linked list and play it
+  if (node->next)
+  {
+    node = node->next;
+    Mix_PlayMusic(Mix_LoadMUS(node->file_path), 1);
+  }
+  // If there are no more songs in the linked list, stop the music
+  else
+  {
+    Mix_HaltMusic();
   }
 }
