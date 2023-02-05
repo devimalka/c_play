@@ -3,5 +3,7 @@
 
 // function to play the song
 int play(char *song);
+void init();
+void musicFinishedPlayback();
 
 #endif
